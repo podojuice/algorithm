@@ -27,8 +27,7 @@ public class bj1967 {
 		}
 		
 		System.out.println(Arrays.toString(tree));
-		System.out.println(Arrays.toString(tree));
-		
+		System.out.println(Arrays.toString(haschild));
 		
 	}
 	
