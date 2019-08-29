@@ -37,7 +37,7 @@ public class kakao_song {
 			// 만약 주어진 노래 정보*2 길이보다 지금 재생된 시간이 작으면,
 			int share = min/songinfo[3].length();
 			int rest = min%songinfo[3].length();
-			for(int j=0; j<share; j++) {
+			for(int k=0; k<share; k++) {
 				sb.append(songinfo[3]);
 			}
 			sb.append(songinfo[3].substring(0, rest));
