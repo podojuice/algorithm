@@ -1,128 +1,103 @@
 package bgud;
 
-class record {
-	record next;
-	record before;
-	String[] field;
-	
-	long s_time = System.currentTimeMillis();
-	
-	void set(String name, String number, String birthday, String email, String memo) {
-		this.field = new String[5];
-		this.field[0] = name;
-		this.field[1] = number;
-		this.field[2] = birthday;
-		this.field[3] = email;
-		this.field[4] = memo;
-	}
-	
+class list {
+	int db_idx, prv, nxt;
 }
 
-class DB {
-	record head;
-	record tail;
-	
-	DB() {
-		record tmp = new record();
-		this.head = tmp;
-		this.tail = tmp;
-	}
-	void add(String name, String number, String birthday, String email, String memo) {
-		record tmp = new record();
-		tmp.set(name, number, birthday, email, memo);
-		tail.next = tmp;
-		tmp.before = tail;
-		tail = tmp;
-	}
-	
-	
-	int delete(int field, String str) {
-		record tmp = this.head.next;
-		int ans = 0;
-		while(tmp != null) {
-			if(eq(tmp.field[field], str)) {
-				tmp.before.next = tmp.next;
-				tmp.next.before = tmp.before;
-				ans++;
-			}
-			
-			tmp = tmp.next;
-		}
-		return ans;
-	}
-	
-	int change(int field, String str, int changefield, String changestr) {
-		record tmp = this.head.next;
-		int ans = 0;
-		while(tmp != null) {
-			if(eq(tmp.field[field], str)) {
-				tmp.field[changefield] = changestr;
-				ans++;
-			}
-			tmp = tmp.next;
-		}
-		return ans;
-	}
-	
-	void search(Solution.Result result, int field, String str, int returnfield) {
-		result.count = 0;
-		result.str = "";
-		record tmp = this.head.next;
-		while(tmp != null) {
-			if(eq(tmp.field[field], str)) {
-				result.str = tmp.field[returnfield];
-				result.count ++;
-			}
-			tmp = tmp.next;
-		}
-		if(result.count != 1) result.str = "";
-	}
-	
-	boolean eq(String a, String b) {
-		
-		if(a.length() != b.length()) {
-			return false;
-		}
-		for(int i=0; i<a.length(); i++) {
-			if(a.charAt(i) != b.charAt(i)) {
-				return false;
-			}
-		}
-		
-		return true;
+class trie {
+	int list_idx[], link[];
+	trie() {
+		this.list_idx = new int[5];
+		this.link = new int[128];
 	}
 }
 
-
+class database {
+	boolean isUsed;
+	String data[];
+	int link[];
+	
+	database() {
+		this.data = new String[5];
+		this.link = new int[5];
+	}
+	
+}
 
 
 
 class UserSolution {
-	static DB db;
+	static int list_cnt, trie_cnt, db_cnt, enc[], enc_cnt;
+	static list[] lst;
+	static trie root;
+	static database[] db;
+	static trie[] tries;
+
 	void InitDB()
 	{
-		db = new DB();
+		lst = new list[250010];
+		root = new trie();
+		tries = new trie[1000010];
+		db = new database[50010];
+		enc = new int[128];
+//		for(int i=0; i<38; ++i) if(root.link[i] != 0) root.link[i] = 0;
+		list_cnt = 0;
+		trie_cnt = 0;
+		db_cnt = 0;
+		enc_cnt = 0;
+		enc['@'] = enc_cnt++;
+		enc['.'] = enc_cnt++;
+		for(int i='0'; i<='9'; ++i) enc[i] = enc_cnt++;
+		for(int i='a'; i<='z'; ++i) enc[i] = enc_cnt++;
 	}
 
 	void Add(String name, String number, String birthday, String email, String memo)
 	{
-		db.add(name, number, birthday, email, memo);
+		int len; 
+		int db_idx = 0;
+		String[] strs = {name, number, birthday, email, memo};
+		trie now;
+		
+		if(db_cnt<50000) db_idx = ++db_cnt;
+		else for(db_idx = 1; db_idx <=50000; ++db_idx) if(!db[db_idx].isUsed) break;
+		db[db_idx].isUsed = true;
+		for(int i =0; i<5; ++i) db[db_idx].data[i] = strs[i];
+		// reverse(email);
+		for(int i=0; i<5; ++i) {
+			len = strs[i].length();
+			now = root;
+			for(int j=0; j<len; ++j) {
+				if(now == null) {
+					now = new trie();
+					now.link[enc[strs[i].charAt(j)]] = ++trie_cnt;
+				}
+				now = tries[now.link[enc[strs[i].charAt(j)]]];
+			}
+			lst[++list_cnt] = new list();
+			lst[list_cnt].db_idx = db_idx;
+			lst[list_cnt].prv = 0;
+			lst[list_cnt].nxt = now.list_idx[i];
+			if(now.list_idx[i] != 0) lst[now.list_idx[i]].prv = list_cnt;
+			now.list_idx[i] = list_cnt;
+			db[db_idx].link[i] = now;
+		}
+		
 	}
 
 	int Delete(int field, String str)
 	{
-		return db.delete(field, str);
+		return 1;
 	}
 
 	int Change(int field, String str, int changefield, String changestr)
 	{
-		return db.change(field, str, changefield, changestr);
+		return 1;
 	}
 
 	Solution.Result Search(int field, String str, int returnfield)
 	{
 		Solution.Result result = new Solution.Result();
-		db.search(result, field, str, returnfield);
+
 		return result;
 	}
 }

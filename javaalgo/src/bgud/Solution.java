@@ -1,6 +1,7 @@
 package bgud;
 
 import java.util.Scanner;
+import java.io.*;
 
 interface Field 
 {
@@ -171,7 +172,7 @@ class Solution
 	
 	public static void main(String[] args) throws Exception
 	{
-		System.setIn(new java.io.FileInputStream("b1"));
+		System.setIn(new FileInputStream("eval_input.txt"));
 		
 		sc = new Scanner(System.in);
 
