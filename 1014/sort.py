@@ -1,7 +1,6 @@
 
 
 def quick(s, e, arr):
-    print(arr, s, e)
     if s < e:
         pivot = s
         ts = s
@@ -15,6 +14,7 @@ def quick(s, e, arr):
                 tmp = arr[ts]
                 arr[ts] = arr[te]
                 arr[te] = tmp
+        print(arr, pivot, te)
         tmp = arr[pivot]
         arr[pivot] = arr[te]
         arr[te] = tmp
@@ -49,6 +49,6 @@ def merge(arr):
 
 arr = [50, 10, 100, 13, 199, 56, 333, 1, 7]
 
-# quick(0, len(arr)-1, arr)
-print(merge(arr))
+quick(0, len(arr)-1, arr)
+# print(merge(arr))
 
